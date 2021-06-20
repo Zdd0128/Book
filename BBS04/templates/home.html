@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {#    左侧菜单栏#}
+    <div class="col-md-2">
+        <div class="panel panel-info">
+            <div class="panel-heading text-center"><a href="">上海老男孩</a></div>
+            <div class="panel-body text-center">
+                <a href="">知名IT教育</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">Python全栈开发</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">Linux运维</a>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading text-center"><a href="">老男孩金牌讲师</a></div>
+            <div class="panel-body text-center">
+                <a href="">金牌讲师Jason鸡</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">金牌夯基础Egon</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">金牌吹师郭德刘</a>
+            </div>
+        </div>
+
+        <div class="panel panel-warning">
+            <div class="panel-heading text-center"><a href="">亚洲最大线上赌场</a></div>
+            <div class="panel-body text-center">
+                <a href="">澳门皇冠</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">性感荷官</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">在线发牌</a>
+            </div>
+        </div>
+
+    </div>
+
+    {#    文章展示#}
+    <div class="col-md-8">
+        {% for article in article_queryset %}
+            <div class="media">
+                <h4 class="media-heading"><a href="/app01/{{ article.blog.userinfo.username }}/article/{{ article.pk }}">{{ article.title }}</a></h4>
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object" style="border-radius: 50%" height="50"
+                             src="/app01/media/{{ article.blog.userinfo.avatar }}/" alt="...">
+                    </a>
+                </div>
+                <div class="media-body">
+                    {{ article.desc }}
+                </div>
+
+                <p style="margin-top: 10px">
+                    <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;
+                    <a href="/app01/{{ article.blog.userinfo.username }}/">{{ article.blog.userinfo.username }}</a>&nbsp;&nbsp;&nbsp;
+                    <span>发布时间:&nbsp;{{ article.create_time|date:"Y-m-d" }}</span>&nbsp;&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-thumbs-up">点赞({{ article.up_num }})</span>&nbsp;&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-thumbs-down">点踩({{ article.down_num }})</span>&nbsp;&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-comment">评论({{ article.comment_num }})</span>&nbsp;&nbsp;&nbsp;
+                </p>
+                <hr style="margin-top: 1px;margin-bottom: 5px">
+            </div>
+        {% endfor %}
+        {{ page_obj.page_html|safe }}
+    </div>
+
+    {#    右侧菜单栏#}
+    <div class="col-md-2">
+        <div class="panel panel-info">
+            <div class="panel-heading text-center"><a href="">上海老男孩</a></div>
+            <div class="panel-body text-center">
+                <a href="">知名IT教育</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">Python全栈开发</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">Linux运维</a>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading text-center"><a href="">老男孩金牌讲师</a></div>
+            <div class="panel-body text-center">
+                <a href="">金牌讲师Jason鸡</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">金牌夯基础Egon</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">金牌吹师郭德刘</a>
+            </div>
+        </div>
+
+        <div class="panel panel-warning">
+            <div class="panel-heading text-center"><a href="">亚洲最大线上赌场</a></div>
+            <div class="panel-body text-center">
+                <a href="">澳门皇冠</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">性感荷官</a>
+            </div>
+            <div class="panel-body text-center">
+                <a href="">在线发牌</a>
+            </div>
+        </div>
+
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <h3 class="text-center">登陆页面</h3>
+        <div class="col-md-4 col-lg-offset-4">
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input class="form-control" id="username" type="text">
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input class="form-control" id="password" type="password">
+            </div>
+            <div class="form-group">
+                <label for="username">验证码:</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input class="form-control" id="code" type="text">
+                    </div>
+                    <div class="col-md-6">
+                        <img id="img" height="35" width="190" src="/app01/random_num/" alt="">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <button class="btn btn-success btn-block">登录</button>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    $("#img").on('click', function () {
+        let sRc = $('#img').attr('src')
+        $(this).attr('src', sRc + '?')
+
+    });
+
+
+    $('.btn').on('click', function () {
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                'username': $('#username').val(),
+                'password': $('#password').val(),
+                'code': $('#code').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    window.location.href = data.url
+                } else {
+                    alert(data.msg)
+                    let sRc = $('#img').attr('src')
+                    $('#img').attr('src', sRc + '?')
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

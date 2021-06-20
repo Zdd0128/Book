@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    {% block css %}
+
+    {% endblock %}
+</head>
+<body>
+{#导航条#}
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            {% if request.user.is_authenticated %}
+                <a class="navbar-brand" href="/app01/{{ request.user.username }}/">{{ request.user.blog.site_title }}</a>
+            {% else %}
+                <a class="navbar-brand" href="#">BBS</a>
+            {% endif %}
+
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/app01/">文章 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">关于</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">查询</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_authenticated %}
+                    <li><a href="/app01/{{ request.user.username }}/">{{ request.user.username }}</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">更多操作 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a data-toggle="modal" data-target="#myModal">修改密码</a></li>
+                            <li><a href="/app01/set_avatar/">修改头像</a></li>
+                            <li><a href="/app01/backend/">后台管理</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/app01/logout/">退 出</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li><a data-toggle="modal" data-target="#myRegister">注册</a></li>
+                    <li><a data-toggle="modal" data-target="#myLogin">登录</a></li>
+                {% endif %}
+
+            </ul>
+        </div><!-- /.navbar-collapse -->
+
+
+        {#修改密码#}
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8 col-lg-offset-2">
+                                <div class="form-group">
+                                    <label for="">用户名:</label>
+                                    <input class="form-control" type="text" value="{{ request.user.username }}"
+                                           disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">原密码:</label>
+                                    <input class="form-control" type="password" id="old_password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">新密码:</label>
+                                    <input class="form-control" type="password" id="new_password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">确认密码:</label>
+                                    <input class="form-control" type="password" id="re_password">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="save btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {#注册#}
+        <div class="modal fade" id="myRegister" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">注册</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <h3 class="text-center">注册页面</h3>
+                            <div class="col-md-10 col-lg-offset-1">
+                                <form id="my_form" novalidate>
+                                    {% csrf_token %}
+                                    {% for form in form_obj %}
+                                        <label for="{{ form.auto_id }}">{{ form.label }}:</label>
+                                        {{ form }}
+                                        <span class="pull-right" style="color: red"></span>
+                                    {% endfor %}
+                                    <br>
+                                    <label for="avatar">上传头像:
+                                        <img id="img" style="border-radius: 50%;margin-left: 10px" height="100"
+                                             src="/static/image/def.jpg"
+                                             alt="">
+                                    </label>
+                                    <input type="file" id="avatar" style="display: none">
+                                </form>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn_register btn btn-info">注册</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {#登录#}
+        <div class="modal fade" id="myLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">登录</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <h3 class="text-center">登陆页面</h3>
+                            <div class="col-md-10 col-lg-offset-1">
+                                <div class="form-group">
+                                    <label for="username">用户名:</label>
+                                    <input class="form-control" id="username" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">密码:</label>
+                                    <input class="form-control" id="password" type="password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="username">验证码:</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input class="form-control" id="code" type="text">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <img class="img" height="35" width="220" src="/app01/random_num/" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="Login btn btn-primary">登录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</div>
+
+
+</body>
+{% block js %}
+
+{% endblock %}
+<script>
+    {#修改密码#}
+    $('.save').on('click', function () {
+        $.ajax({
+            url: '{% url 'set_password_view' %}',
+            type: 'post',
+            data: {
+                'old_password': $('#old_password').val(),
+                'new_password': $('#new_password').val(),
+                're_password': $('#re_password').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    window.location.href = data.url
+                } else {
+                    alert(data.msg)
+                }
+            }
+        })
+    })
+
+
+    {#注册#}
+    $('#avatar').change(function () {
+        let fileReaderObj = new FileReader()
+        let fileObj = $(this)[0].files[0]
+        fileReaderObj.readAsDataURL(fileObj)
+        fileReaderObj.onload = function () {
+            $('#img').attr('src', fileReaderObj.result)
+        }
+    })
+    $('.btn_register').on('click', function () {
+        let formDataObj = new FormData()
+        $.each($('#my_form').serializeArray(), function (index, obj) {
+            formDataObj.append(obj.name, obj.value)
+        })
+        {#formDataObj.append('csrfmiddlewaretoken', '{{ csrf_token }}')#}
+        formDataObj.append('avatar', $("#avatar")[0].files[0])
+        $.ajax({
+            url: '{% url 'register_view' %}',
+            type: 'post',
+            data: formDataObj,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    window.location.href = '/app01/'
+                } else {
+
+                    $.each(data.msg, function (name, errors) {
+                        let inputId = '#id_' + name
+
+                        $(inputId).next().text(errors[0]).parent().addClass('has-error')
+                    })
+                }
+            }
+        })
+        $('input').focus(function () {
+            $(this).next().text('').parent().removeClass('has-error')
+        })
+    })
+
+
+    {#登录#}
+    $(".img").on('click', function () {
+        let sRc = $('.img').attr('src')
+        $(this).attr('src', sRc + '?')
+
+    });
+    $('.Login').on('click', function () {
+        $.ajax({
+            url: '{% url 'login_view' %}',
+            type: 'post',
+            data: {
+                'username': $('#username').val(),
+                'password': $('#password').val(),
+                'code': $('#code').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    window.location.href = data.url
+                } else {
+                    alert(data.msg)
+                    let sRc = $('.img').attr('src')
+                    $('.img').attr('src', sRc + '?')
+                }
+            }
+        })
+    })
+
+
+</script>
+</html>
