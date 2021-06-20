@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            {#左侧菜单栏#}
+            <div class="col-md-2">
+                <div class="panel panel-info">
+                    <div class="panel-heading text-center"><a>上海老男孩IT教育</a></div>
+                    <div class="panel-body text-center">
+                        <a>Python全栈开发</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>Linux运维</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>数据分析</a>
+                    </div>
+                </div>
+
+                <div class="panel panel-success">
+                    <div class="panel-heading text-center"><a>老男孩金牌讲师</a></div>
+                    <div class="panel-body text-center">
+                        <a>教学总监矮跟</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>金牌讲师戒僧鸡</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>金牌讲师郭德刘</a>
+                    </div>
+                </div>
+
+                <div class="panel panel-warning">
+                    <div class="panel-heading text-center"><a>亚洲最大线下教育</a></div>
+                    <div class="panel-body text-center">
+                        <a>认准老男孩</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>心动不如行动</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>报名热线888-88888</a>
+                    </div>
+                </div>
+
+            </div>
+
+            {#文章列表#}
+            <div class="col-md-8">
+                {% for article in article_queryset %}
+                    <div class="media">
+                        <h4 class="media-heading">
+                            <a class="title_read"
+                               href="/app01/{{ article.blog.userinfo.username }}/article/{{ article.pk }}">{{ article.title }}</a>
+                        </h4>
+                        <div class="media-left">
+                            <a>
+                                <img height="50" style="border-radius: 50%" class="media-object"
+                                     src="/app01/media/{{ article.blog.userinfo.avatar }}/">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            {{ article.desc }}
+                        </div>
+                        <div>
+                            <p style="margin-top: 3px">
+                            <span>
+                                <a href="/app01/{{ article.blog.userinfo.username }}/">{{ article.blog.userinfo.username }}</a>
+                            </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>{{ article.create_time|date:'Y-m' }}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span class="glyphicon glyphicon-thumbs-up">点赞({{ article.up_num }})</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span class="glyphicon glyphicon-thumbs-down">点踩({{ article.down_num }})</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span class="glyphicon glyphicon-comment">评论({{ article.comment_num }})</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span class="glyphicon glyphicon-eye-open read">阅读量({{ article.article_read }})</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </p>
+                        </div>
+                        <hr style="margin-top: -3px;margin-bottom: 0px">
+                    </div>
+                {% endfor %}
+                {{ page_obj.page_html|safe }}
+            </div>
+
+            {#右侧菜单栏#}
+            <div class="col-md-2">
+                <div class="panel panel-info">
+                    <div class="panel-heading text-center"><a>上海老男孩IT教育</a></div>
+                    <div class="panel-body text-center">
+                        <a>Python全栈开发</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>Linux运维</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>数据分析</a>
+                    </div>
+                </div>
+
+                <div class="panel panel-success">
+                    <div class="panel-heading text-center"><a>老男孩金牌讲师</a></div>
+                    <div class="panel-body text-center">
+                        <a>教学总监矮跟</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>金牌讲师戒僧鸡</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>金牌讲师郭德刘</a>
+                    </div>
+                </div>
+
+                <div class="panel panel-warning">
+                    <div class="panel-heading text-center"><a>亚洲最大线下教育</a></div>
+                    <div class="panel-body text-center">
+                        <a>认准老男孩</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>心动不如行动</a>
+                    </div>
+                    <div class="panel-body text-center">
+                        <a>报名热线888-88888</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

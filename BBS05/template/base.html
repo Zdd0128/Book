@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link href="{% static 'bootstrap-3.4.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    {% block css %}
+
+    {% endblock %}
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!--导航样式开始-->
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar">1</span>
+                <span class="icon-bar">2</span>
+                <span class="icon-bar">3</span>
+            </button>
+            {% if request.user.is_authenticated %}
+                <a class="navbar-brand"
+                   href="/app01/{{ request.user.username }}/">{{ request.user.blog.site_title }}</a>
+            {% else %}
+                <a class="navbar-brand" href="#">BBS</a>
+            {% endif %}
+
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+
+                <li class="active"><a href="/app01/">文章 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">关于</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input id="now_time" onfocus="this.placeholder=''" style="font-size: 18px" type="text"
+                           class="form-control">
+                </div>
+                <button type="submit" class="btn btn-default">Now</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+
+                {% if request.user.is_authenticated %}
+                    <li><img title="{{ request.user.username }}" id="my_avatar" height="36"
+                             style="border-radius: 50%;margin-top: 7px"
+                             src="/app01/media/{{ request.user.avatar }}" alt=""></li>
+                    <li><a href="#">{{ request.user.username }}</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">更多操作 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a data-toggle="modal" data-target="#Set_pwd">修改密码</a></li>
+                            <li><a href="/app01/set_avatar/">修改头像</a></li>
+                            <li><a href="/app01/backend/">后台管理</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/app01/logout/">退出</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li><a data-toggle="modal" data-target="#Register">注册</a></li>
+                    <li><a data-toggle="modal" data-target="#Login">登录</a></li>
+                {% endif %}
+            </ul>
+        </div><!-- /.navbar-collapse -->
+
+
+        <!--注册模态框开始-->
+        <div class="modal fade" id="Register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">注册页面</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8 col-lg-offset-2">
+                                <form id="my_form">
+                                    {% csrf_token %}
+                                    {% for form in form_obj %}
+                                        <label for="{{ form.auto_id }}">{{ form.label }}</label>
+                                        {{ form }}
+                                        <span class="pull-right" style="color: red"></span>
+                                    {% endfor %}
+                                    <br>
+
+                                    <label for="avatar">上传头像:<img id="img" style="border-radius: 50%;margin-left: 80px"
+                                                                  height="100" src="/static/image/def.jpg"
+                                                                  alt=""></label>
+                                    <input id="avatar" type="file" style="display: none">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="Register btn btn-primary">
+                            注册
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--注册模态框结束-->
+
+
+        <!--登录模态框开始-->
+        <div class="modal fade" id="Login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">登陆页面</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8 col-lg-offset-2">
+                                <div class="form-group">
+                                    <label for="username">用户名:</label>
+                                    <input class="form-control" id="username" type="text"
+                                           value="{{ request.COOKIES.username }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">密码:</label>
+                                    <input class="form-control" id="password" type="password"
+                                           value="{{ request.COOKIES.password }}">
+                                    <a><span id="display_pwd" style="position: reLative;top: -24px;left: 340px"
+                                             class="glyphicon glyphicon-eye-close"></span></a>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">验证码:</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input class="form-control" id="code" type="text">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <img id="img_code" height="35" width="170" src="/app01/random_num/"
+                                                 alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if request.COOKIES.username %}
+
+                                {% else %}
+                                    <div class="form-group">
+                                        <label for="save_pwd">记住密码:</label>
+                                        <input id="save_pwd" class="form-control" type="text" placeholder="输入Yes记住密码"
+                                               onfocus="this.placeholder=''" onblur="this.placeholder='输入Yes记住密码'">
+                                    </div>
+                                {% endif %}
+                                <br>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="Login btn btn-primary">登录</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--登录模态框结束-->
+
+
+        <!--修改密码模态框开始-->
+        <div class="modal fade" id="Set_pwd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8 col-lg-offset-2">
+                                <div class="form-group">
+                                    <label for="old_name">用户名:</label>
+                                    <input id="old_name" class="form-control" type="text"
+                                           value="{{ request.user.username }}" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="old_password">原密码:</label>
+                                    <input id="old_password" class="form-control" type="password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new_password">新密码:</label>
+                                    <input id="new_password" class="form-control" type="password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="re_password">确认密码:</label>
+                                    <input id="re_password" class="form-control" type="password">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="Set_password btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--修改密码模态框结束-->
+
+    </div><!-- /.container-fluid -->
+</nav>
+<!--导航样式结束-->
+
+{#主页信息展示#}
+<div class="container-fluid">
+    <div class="row">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</div>
+{% block js %}
+
+{% endblock %}
+<script>
+    {#上传头像实时展示#}
+    $('#avatar').change(function () {
+        let fileReaderObj = new FileReader()
+        let avatarObj = $('#avatar')[0].files[0]
+        fileReaderObj.readAsDataURL(avatarObj)
+        fileReaderObj.onload = function () {
+            $('#img').attr('src', fileReaderObj.result)
+        }
+    })
+
+
+    {#注册事件#}
+    $('.Register').on('click', function () {
+        $('#Login').addClass('hide')
+        let formDataObj = new FormData()
+        $.each($('#my_form').serializeArray(), function (index, obj) {
+            formDataObj.append(obj.name, obj.value)
+        })
+        formDataObj.append('avatar', $('#avatar')[0].files[0])
+
+        $.ajax({
+            url: '{% url 'register_view' %}',
+            type: 'post',
+            data: formDataObj,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    $('#Login').removeClass('hide')
+                    window.location.href = data.url
+                } else {
+                    $.each(data.msg, function (name, errors) {
+                        inputId = '#id_' + name
+                        $(inputId).next().text(errors[0]).parent().addClass('has-error')
+                    })
+                }
+            }
+        })
+        $('input').focus(function () {
+            $(this).next().text('').parent().removeClass('has-error')
+        })
+    })
+
+    {#验证码刷新#}
+    $("#img_code").on('click', function () {
+        let sRc = $('#img_code').attr('src')
+        $(this).attr('src', sRc + '?')
+    })
+
+    {#登陆事件#}
+    $('.Login').on('click', function () {
+        $.ajax({
+            url: '{% url 'login_view' %}',
+            type: 'post',
+            data: {
+                'username': $('#username').val(),
+                'password': $('#password').val(),
+                'code': $('#code').val(),
+                'save_pwd': $('#save_pwd').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    window.location.href = data.url
+                } else {
+                    alert(data.msg)
+                    let sRc = $('#img_code').attr('src')
+                    $('#img_code').attr('src', sRc + '?')
+                }
+            }
+        })
+    })
+
+    {#密码隐藏显示#}
+    $('#display_pwd').on('click', function () {
+        let type = $('#password').attr('type')
+        if (type === 'password') {
+            $('#password').attr('type', 'text')
+            $(this).attr('class', 'glyphicon glyphicon-eye-open')
+        } else {
+            $('#password').attr('type', 'password')
+            $(this).attr('class', 'glyphicon glyphicon-eye-close')
+        }
+    })
+
+    {#修改密码#}
+    $('.Set_password').on('click', function () {
+        $.ajax({
+            url: '{% url 'set_password_view' %}',
+            type: 'post',
+            data: {
+                'old_password': $('#old_password').val(),
+                'new_password': $('#new_password').val(),
+                're_password': $('#re_password').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (data) {
+                if (data.code === 100) {
+                    alert(data.msg)
+                    window.location.href = data.url
+                } else {
+                    alert(data.msg)
+                }
+            }
+
+        })
+    })
+
+
+    {#实时时间展示#}
+    function showTime() {
+        $('#now_time').val(new Date().toLocaleString('zh', {hour12: false}).replaceAll('/', '-'))
+        {% comment %}$('#now_time').val(new Date().toLocaleString('zh',
+            {
+                year: '2-digit',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })) // 2018/4/5 下午7:30:17 {% endcomment %}
+        {% comment %}$('#now_time').val(new Date().toLocaleString('zh',
+            {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+            })) // 18/04/05 下午7:30:17
+{% endcomment %}
+
+    }
+    setInterval(showTime, 1000)
+
+</script>
+</body>
+</html>
